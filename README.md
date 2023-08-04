@@ -1,2 +1,29 @@
 # nwsynth
-The New World Synthesizer, a Python-based synthesizer made from scratch.
+
+The New World Synthesizer, a Python-based synthesizer made from scratch ~~, a wheel I am trying to reinvent~~.
+
+从零开始打造的合成器，不足之处/待实现的功能要远远多于已实现的功能。
+
+原理：按下键盘选择波形和频率（音高），软件内部生成波形数据，利用PyAudio库将波形数据传输至音频设备。
+
+
+## v0.0.1
+
+### 已有功能
+
++ 键盘数字键（非小键盘）选择音高（八度）
++ 键盘前两排（Q行和A行）为琴键。Q行是黑键，A行是白键；A为低音sol，F为中音do，J为中音fa，单引号为高音do
++ 使用键盘第三排Z键到N键，选择矩形波（可以在代码中指定duty cycle）、三角波、锯齿波、正弦波
++ 支持极其简单的音量控制（没有R的ADSR，A和D过程中的音量变化均为线性）
+
+### 待实现的功能
+
++ ADSR的R（监听键盘松开事件）
++ ADSR可以进化为函数（vol=f(tick)，其实现在已经是函数了。那就是增加参数个数，增加ADSR功能，比如S内的音量变化、音高变化）
++ 未实现琶音和颤音
++ 新增噪声波（使用LFSR）
++ 新增采样单次播放映射至按键（用来打鼓）
++ 重写流传输引擎：独立的streaming线程，不断读取缓冲区/队列并进行少量sample的高频、实时传输；mixer，接受多个音频通道的sample并输出至缓冲区/队列
++ 新引擎解决以下问题：采样播放不能中断/从头开始，长采样效果不好（流的传输增加缓冲区/先入先出队列，参照FC DMC设计）
++ 多通道（新增缓冲区的mixer，参照FC设计；多audio？好像不可行）
++ 这些都实现了之后，就可以考虑玩玩FM了。未来的道路还很漫长，加油！
