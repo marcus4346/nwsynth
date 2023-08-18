@@ -43,6 +43,28 @@ class Waveform16:
         half_length = self.sample_length // 2
         return [int(self.amplitude * sin(i * pi / half_length)) for i in range(self.sample_length)]
     
+    def noise_sample(self, short_period=False):
+        # On power-up, the shift register is loaded with the value 1.
+        lfsr = 1
+        wave = []
+        while True:
+            bit0 = bool(lfsr & 1)
+            # Current sample frame
+            wave.append(self.amplitude if bit0 else -self.amplitude)
+            # Feedback is calculated as the exclusive-OR of bit 0 and one other bit:
+            # bit 6 if Mode flag is set, otherwise bit 1.
+            xor_bit = 6 if short_period else 1
+            bit1 = bool(lfsr & 1 << xor_bit)
+            feedback_value = bit0 ^ bit1
+            # The shift register is shifted right by one bit.
+            lfsr >>= 1
+            # Bit 14, the leftmost bit, is set to the feedback calculated earlier.
+            lfsr |= feedback_value << 14
+            if lfsr == 1:
+                # 一个周期结束
+                break
+        return wave
+    
 def dpcm_loader(path: Path):
     data = path.read_bytes()
     sample = []

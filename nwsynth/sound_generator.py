@@ -29,8 +29,8 @@ class Key:
 
 class SoundGenerator:
     @classmethod
-    def _get_freq_table(cls, middle_c_freq: float):
-        # When middle_c_freq is 261.63,
+    def _get_freq_table(cls, middle_a_freq: float):
+        # When middle_a_freq is 440,
         # freq_table is {
         #     # Low G to low B
         #     'a': 196.00, 'w': 207.65, 's': 220.00, 'e': 233.08, 'd': 246.94,
@@ -42,14 +42,23 @@ class SoundGenerator:
         #     'p': 466.16, ';': 493.88, '\'': 523.25
         # }
         # with keys as the corresponding virtual key code
+
+        # [start] --- [-9 as Middle C] --- [0 as Middle A] --- [stop]
+        # and stop - start == len(TONE_KEYS) - 1
+        rel_freq_list = np.logspace(
+            -9 - MIDDLE_C_INDEX,
+            len(TONE_KEYS) - MIDDLE_C_INDEX - 10,
+            num=len(TONE_KEYS),
+            base=pow(2, 1 / 12)
+        )
         freq_table = {}
         for index, vk in enumerate(TONE_KEYS):
-            freq_table[vk] = middle_c_freq * pow(2, (index - 5) / 12)
+            freq_table[vk] = rel_freq_list[index] * middle_a_freq
         return freq_table
 
-    def __init__(self, mixer: Mixer, middle_c_freq: float = 261.63):
+    def __init__(self, mixer: Mixer, middle_a_freq: float = 440):
         self._mixer = mixer
-        self._freq_table = self._get_freq_table(middle_c_freq)
+        self._freq_table = self._get_freq_table(middle_a_freq)
         self.key_events: SimpleQueue[int, int] = SimpleQueue()
         self._activated_keys: dict[int, Key] = {}
         self.instrument = sq4
@@ -102,9 +111,10 @@ class SoundGenerator:
             for _ in range(self.key_events.qsize()):
                 vk, event = self.key_events.get()
                 if event == Key.KEY_PRESSED:
+                    freq = self._freq_table[vk] * 2 ** (self.octave - 4)
                     key = Key(
                         self.instrument,
-                        self._freq_table[vk],
+                        freq,
                         volume_function
                     )
                     self._activated_keys[vk] = key

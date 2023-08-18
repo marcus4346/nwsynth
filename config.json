@@ -1,0 +1,69 @@
+{
+    "main": {
+        "middleCOffset": 0
+    },
+    "customWaveforms": {
+        "bassDrum": {
+            "type": "dpcm",
+            "path": "~/Desktop/BassDrum.dmc"
+        },
+        "snare": {
+            "type": "dpcm",
+            "path": "~/Desktop/Snare.dmc"
+        },
+        "bass1": {
+            "type": "dpcm",
+            "path": "~/Desktop/Bass1.dmc"
+        }
+    },
+    "customInstruments":{
+        "bass": {
+            "-1": {
+                "waveform": "bass0",
+                "freq": 4.1
+            },
+            "0": {
+                "waveform": "bass1",
+                "freq": 4.1
+            },
+            "1": {
+                "waveform": "bass2",
+                "freq": 4.1
+            }
+        }
+    },
+    "instrumentLists": [
+        {
+            "type": "builtin",
+            "name": "squarewave",
+            "args": [0.5],
+            "adsr": {"type": "linear", "args": [1, 0, 24, 0.25, 5]},
+            "pitch": null
+        },
+        {
+            "type": "builtin",
+            "name": "trianglewave",
+            "args": [],
+            "adsr": {"type": "linear", "args": [1, 0, 0, 1, 0]},
+            "pitch": null
+        },
+        {
+            "type": "custom",
+            "name": "bass",
+            "args": [],
+            "adsr": {"type": "linear", "args": [1, 0, 0, 1, 0]},
+            "pitch": null
+        }
+    ],
+    "defaultInstrument": 0,
+    "percussionInstrument": [
+        {
+            "waveform": "bassDrum",
+            "freq": 4.1
+        },
+        {
+            "waveform": "snare",
+            "freq": 4.1
+        }
+    ]
+}
