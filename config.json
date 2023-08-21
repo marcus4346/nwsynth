@@ -5,30 +5,100 @@
     "customWaveforms": {
         "bassDrum": {
             "type": "dpcm",
-            "path": "~/Desktop/BassDrum.dmc"
+            "path": "BassDrum.dmc"
         },
         "snare": {
             "type": "dpcm",
-            "path": "~/Desktop/Snare.dmc"
+            "path": "Snare.dmc"
         },
-        "bass1": {
+        "tom": {
+            "type": "builtin",
+            "name": "noisewave",
+            "args": [false],
+            "pitch": null
+        },
+        "bassAtBFlat": {
             "type": "dpcm",
-            "path": "~/Desktop/Bass1.dmc"
+            "path": "BassAtBFlat.dmc"
+        },
+        "bassAtB": {
+            "type": "dpcm",
+            "path": "BassAtB.dmc"
+        },
+        "bassAtC": {
+            "type": "dpcm",
+            "path": "BassAtC.dmc"
+        },
+        "bassAtCSharp": {
+            "type": "dpcm",
+            "path": "BassAtCSharp.dmc"
+        },
+        "bassAtD": {
+            "type": "dpcm",
+            "path": "BassAtD.dmc"
         }
     },
     "customInstruments":{
         "bass": {
+            "-2": {
+                "waveform": "bassAtBFlat",
+                "freq": 2.13,
+                "play_once": true
+            },
             "-1": {
-                "waveform": "bass0",
-                "freq": 4.1
+                "waveform": "bassAtB",
+                "freq": 2.05,
+                "play_once": true
             },
             "0": {
-                "waveform": "bass1",
-                "freq": 4.1
+                "waveform": "bassAtC",
+                "freq": 2.05,
+                "play_once": true
             },
-            "1": {
-                "waveform": "bass2",
-                "freq": 4.1
+            "2": {
+                "waveform": "bassAtD",
+                "freq": 2.05,
+                "play_once": true
+            },
+            "3": {
+                "waveform": "bassAtB",
+                "freq": 2.64,
+                "play_once": true
+            },
+            "5": {
+                "waveform": "bassAtCSharp",
+                "freq": 2.684,
+                "play_once": true
+            },
+            "6": {
+                "waveform": "bassAtB",
+                "freq": 3.075,
+                "play_once": true
+            },
+            "7": {
+                "waveform": "bassAtC",
+                "freq": 3.075,
+                "play_once": true
+            },
+            "8": {
+                "waveform": "bassAtCSharp",
+                "freq": 3.14,
+                "play_once": true
+            },
+            "9": {
+                "waveform": "bassAtD",
+                "freq": 3.075,
+                "play_once": true
+            },
+            "10": {
+                "waveform": "bassAtBFlat",
+                "freq": 4.17,
+                "play_once": true
+            },
+            "12": {
+                "waveform": "bassAtC",
+                "freq": 4.1,
+                "play_once": true
             }
         }
     },
@@ -36,8 +106,29 @@
         {
             "type": "builtin",
             "name": "squarewave",
+            "args": [0.125],
+            "adsr": {"type": "linear", "args": [1, 0, 25, 0.5, 25]},
+            "pitch": null
+        },
+        {
+            "type": "builtin",
+            "name": "squarewave",
+            "args": [0.25],
+            "adsr": {"type": "linear", "args": [1, 0, 24, 0.25, 25]},
+            "pitch": null
+        },
+        {
+            "type": "builtin",
+            "name": "squarewave",
+            "args": [0.375],
+            "adsr": {"type": "linear", "args": [1, 0, 24, 0.25, 25]},
+            "pitch": null
+        },
+        {
+            "type": "builtin",
+            "name": "squarewave",
             "args": [0.5],
-            "adsr": {"type": "linear", "args": [1, 0, 24, 0.25, 5]},
+            "adsr": {"type": "linear", "args": [1, 0, 24, 0.25, 25]},
             "pitch": null
         },
         {
@@ -59,11 +150,19 @@
     "percussionInstrument": [
         {
             "waveform": "bassDrum",
-            "freq": 4.1
+            "freq": 23.5,
+            "play_once": true
         },
         {
             "waveform": "snare",
-            "freq": 4.1
+            "freq": 8.46,
+            "play_once": true
+        },
+        {
+            "waveform": "tom",
+            "freq": 10,
+            "play_once": false,
+            "adsr": {"type": "linear", "args": [1, 0, 24, 0, 0]}
         }
     ]
 }

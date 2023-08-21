@@ -1,10 +1,11 @@
 from math import pi, sin
 from pathlib import Path
 
+from .config import custom_waveforms
 from .utils import linear_adsr
 
 class Waveform16:
-    def __init__(self, amplitude: int = 8192, sample_length: int = 64):
+    def __init__(self, amplitude: int = 2048, sample_length: int = 64):
         assert 0 < amplitude < 32768
         assert sample_length > 0
         self.amplitude = amplitude
@@ -43,7 +44,7 @@ class Waveform16:
         half_length = self.sample_length // 2
         return [int(self.amplitude * sin(i * pi / half_length)) for i in range(self.sample_length)]
     
-    def noise_sample(self, short_period=False):
+    def get_noise_wave(self, short_period=False):
         # On power-up, the shift register is loaded with the value 1.
         lfsr = 1
         wave = []
@@ -72,19 +73,34 @@ def dpcm_loader(path: Path):
     for byte in data:
         for bit_position in range(8):
             value = byte & 1 << bit_position
+            # If the bit is 1, add 2; otherwise, subtract 2.
+            # But if adding or subtracting 2 would cause the output level to leave the 0-127 range,
+            # （注：此处初始值是0，那么范围为-64 ~ 63）
+            # leave the output level unchanged.
+            # This means subtract 2 only if the current level is at least 2,（也就是-62）
+            # or add 2 only if the current level is at most 125.（也就是61）
             if value:
-                frame += 5
+                if frame <= 61:
+                    frame += 2
             else:
-                frame -= 5
+                if frame >= -62:
+                    frame -= 2
             sample.append(frame * 256)
     return sample
 
 _wf16 = Waveform16()
-sq1 = _wf16.get_square_wave(1 / 8)
-sq2 = _wf16.get_square_wave(2 / 8)
-sq3 = _wf16.get_square_wave(3 / 8)
-sq4 = _wf16.get_square_wave(4 / 8)
-tr = _wf16.get_triangle_wave()
-sa = _wf16.get_sawtooth_wave()
-si = _wf16.get_sine_wave()
-volume_function = linear_adsr((1, 0, 24, 0.25, 5))
+builtin = {
+    'squarewave': _wf16.get_square_wave,
+    'trianglewave': _wf16.get_triangle_wave,
+    'sawtoothwave': _wf16.get_sawtooth_wave,
+    'sinewave': _wf16.get_sine_wave,
+    'noisewave': _wf16.get_noise_wave,
+}
+custom = {}
+for name, info in custom_waveforms.items():
+    if info['type'] == 'dpcm':
+        path = Path(__file__).parent.parent.joinpath('samples').joinpath(info['path'])
+        waveform = dpcm_loader(path)
+    elif info['type'] == 'builtin':
+        waveform = builtin[info['name']](*info['args'])
+    custom[name] = waveform

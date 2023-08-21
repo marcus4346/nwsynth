@@ -13,7 +13,7 @@ i16_info = np.iinfo(int16)
 
 class Mixer:
     def __init__(self):
-        self.input_channels: dict[int, SimpleQueue[np.ndarray]] = {vk: SimpleQueue() for vk in TONE_KEYS}
+        self.input_channels: dict[int, SimpleQueue[np.ndarray]] = {vk: SimpleQueue() for vk in TONE_KEYS + PERCUSSION_INSTRUMENT_KEYS}
         self._output_channel: SimpleQueue[np.ndarray] = SimpleQueue()
         self._audio = PyAudio()
         self._stream = self._audio.open(

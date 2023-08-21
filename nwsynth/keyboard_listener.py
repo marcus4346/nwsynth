@@ -1,13 +1,10 @@
 from pynput.keyboard import Listener
 from pynput.keyboard._win32 import Key, KeyCode
 
-from .constants import INSTRUMEMT_SELECTION_KEYS, OCTAVE_SELECTION_KEYS, TONE_KEYS
+from .constants import *
 from .sound_generator import SoundGenerator
 
 class KeyboardListener:
-    KEY_PRESSED = 1
-    KEY_RELEASED = 2
-
     def __init__(self, sg: SoundGenerator):
         self._sg = sg
         self._pressed_keys: set[int] = set()
@@ -24,10 +21,11 @@ class KeyboardListener:
             elif isinstance(key, Key):
                 vk = key.value.vk
             if vk in OCTAVE_SELECTION_KEYS:
-                self._sg.octave = vk - 48
-                return
-            if vk in TONE_KEYS and vk not in self._pressed_keys:
-                self._sg.key_events.put((vk, self.KEY_PRESSED))
+                self._sg.set_octave(vk)
+            elif vk in INSTRUMEMT_SELECTION_KEYS:
+                self._sg.set_instrument(vk)
+            elif vk in TONE_KEYS + PERCUSSION_INSTRUMENT_KEYS and vk not in self._pressed_keys:
+                self._sg.key_events.put((vk, KeyStatus.PRESSED))
                 self._pressed_keys.add(vk)
 
     def _on_release(self, key):
@@ -37,7 +35,8 @@ class KeyboardListener:
             if isinstance(key, Key):
                 vk = key.value.vk
             if vk in self._pressed_keys:
-                self._sg.key_events.put((vk, self.KEY_RELEASED))
+                if vk in TONE_KEYS:
+                    self._sg.key_events.put((vk, KeyStatus.RELEASED))
                 self._pressed_keys.remove(vk)
     
     def listen(self):
