@@ -14,7 +14,7 @@
         "tom": {
             "type": "builtin",
             "name": "noisewave",
-            "args": [false],
+            "args": [1024, false],
             "pitch": null
         },
         "bassAtBFlat": {
@@ -106,35 +106,35 @@
         {
             "type": "builtin",
             "name": "squarewave",
-            "args": [0.125],
+            "args": [2048, 0.125],
             "adsr": {"type": "linear", "args": [1, 0, 25, 0.5, 25]},
             "pitch": null
         },
         {
             "type": "builtin",
             "name": "squarewave",
-            "args": [0.25],
+            "args": [2048, 0.25],
             "adsr": {"type": "linear", "args": [1, 0, 24, 0.25, 25]},
             "pitch": null
         },
         {
             "type": "builtin",
             "name": "squarewave",
-            "args": [0.375],
+            "args": [2048, 0.375],
             "adsr": {"type": "linear", "args": [1, 0, 24, 0.25, 25]},
             "pitch": null
         },
         {
             "type": "builtin",
             "name": "squarewave",
-            "args": [0.5],
+            "args": [2048, 0.5],
             "adsr": {"type": "linear", "args": [1, 0, 24, 0.25, 25]},
             "pitch": null
         },
         {
             "type": "builtin",
             "name": "trianglewave",
-            "args": [],
+            "args": [8192],
             "adsr": {"type": "linear", "args": [1, 0, 0, 1, 0]},
             "pitch": null
         },
@@ -146,7 +146,7 @@
             "pitch": null
         }
     ],
-    "defaultInstrument": 0,
+    "defaultInstrument": 3,
     "percussionInstrument": [
         {
             "waveform": "bassDrum",

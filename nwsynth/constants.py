@@ -1,5 +1,6 @@
 from enum import IntEnum
 
+
 SAMPLE_RATE = 44100
 TICK = 1 / 60
 SAMPLE_COUNT_IN_A_TICK = int(SAMPLE_RATE * TICK)  # 735

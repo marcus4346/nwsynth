@@ -1,21 +1,4 @@
-from threading import Semaphore
-from time import perf_counter, sleep
-
-class Clock:
-    def __init__(self, tick):
-        self.start = perf_counter()
-        self.tick = tick
-
-    @property
-    def ticks(self):
-        return (perf_counter() - self.start) // self.tick
-
-    def sleep(self):
-        next_tick = self.ticks + 1
-        while self.ticks < next_tick:
-            sleep(1/1000)
-
-sync_lock = Semaphore()
+from time import sleep
 
 def linear_adsr(adsr: tuple[float, int, int, float, int]):
     def get_volume(status: int, ticks: int, ticks_since_released: int) -> float:

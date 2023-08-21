@@ -1,5 +1,4 @@
 from queue import SimpleQueue
-from time import sleep
 from types import FunctionType
 
 import numpy as np
@@ -8,7 +7,6 @@ from numpy import ndarray
 from .config import *
 from .constants import *
 from .mixer import Mixer
-from .utils import Clock, sync_lock
 from .waveform import *
 
 
@@ -44,8 +42,8 @@ class SoundGenerator:
         # [start] --- [-9 as Middle C] --- [0 as Middle A] --- [stop]
         # and stop - start == len(TONE_KEYS) - 1
         rel_freq_list = np.logspace(
-            -9 - MIDDLE_C_INDEX,
-            len(TONE_KEYS) - MIDDLE_C_INDEX - 10,
+            -9 - MIDDLE_C_INDEX + main_config['middleCOffset'],
+            len(TONE_KEYS) - MIDDLE_C_INDEX - 10 + main_config['middleCOffset'],
             num=len(TONE_KEYS),
             base=pow(2, 1 / 12)
         )
@@ -141,6 +139,7 @@ class SoundGenerator:
 
     def _process_key(self, vk: int):
         key = self._activated_keys[vk]
+        channel = self._mixer.input_channels[vk]
         status = key.status
         if status != KeyStatus.FINISHED:
             volume = key.volume_adsr(
@@ -150,17 +149,14 @@ class SoundGenerator:
             )
             if status == KeyStatus.RELEASED and volume == 0:
                 self._activated_keys[vk].status = KeyStatus.FINISHED
-                return
-            channel = self._mixer.input_channels[vk]
-            wave = self._get_wave(key, volume, key.freq)
-            channel.put(wave)
-            key.ticks += 1
-            if status == KeyStatus.RELEASED:
-                key.ticks_since_released += 1
-
+            else:
+                wave = self._get_wave(key, volume, key.freq)
+                key.ticks += 1
+                if status == KeyStatus.RELEASED:
+                    key.ticks_since_released += 1
+                channel.put(wave)
         
     def generate(self):
-        clock = Clock(TICK)
         while True:
             for _ in range(self.key_events.qsize()):
                 vk, event = self.key_events.get()
@@ -177,8 +173,7 @@ class SoundGenerator:
                         self._activated_keys[vk].status = KeyStatus.RELEASED
             for vk in self._activated_keys:
                 self._process_key(vk)
-            sync_lock.release()
-            clock.sleep()
+            self._mixer.mix()
 
     def set_octave(self, vk: int):
         self.octave = vk - OCTAVE_SELECTION_KEYS[0] + 1
